@@ -1,34 +1,56 @@
 import {createStore} from 'redux';
 
-const $add = document.getElementById('add');
-const $minus = document.getElementById('minus');
-const $counter = document.querySelector('span');
+const $form = document.querySelector('form');
+const $input = document.querySelector('input');
+const $ul = document.querySelector('ul');
 
-const ADD = 'ADD';
-const MINUS = 'MINUS';
+const ADD_TODO = 'ADD_TODO';
+const DELETE_TODO = 'DELETE_TODO';
 
-const countReducer = (count = 0, action) => {
-  if (action.type === ADD) {
-    return count + 1;
-  }
-
-  if (action.type === MINUS) {
-    return count - 1;
-  }
-
-  return count;
+const actions = {
+  addTodo: (text) => ({type: ADD_TODO, text}),
+  deleteTodo: (id) => ({type: DELETE_TODO, id}),
 };
 
-const countStore = createStore(countReducer);
-
-const handleChange = () => {
-  $counter.textContent = countStore.getState();
+const reducer = (state = [], action) => {
+  switch (action.type) {
+    case ADD_TODO:
+      return [{text: action.text, id: Date.now()}, ...state];
+    case DELETE_TODO:
+      return state.filter((todo) => todo.id !== action.id);
+    default:
+      return state;
+  }
 };
 
-const handleAdd = () => countStore.dispatch({type: ADD});
+const store = createStore(reducer);
 
-const handleMinus = () => countStore.dispatch({type: MINUS});
+const handleAddTodo = (text) => store.dispatch(actions.addTodo(text));
 
-countStore.subscribe(handleChange);
-$add.addEventListener('click', handleAdd);
-$minus.addEventListener('click', handleMinus);
+const handleDeleteTodo = (e) =>
+  store.dispatch(actions.deleteTodo(parseInt(e.target.parentNode.id)));
+
+const handleSubmit = (e) => {
+  e.preventDefault();
+  const todo = $input.value;
+  $input.value = '';
+  handleAddTodo(todo);
+};
+
+const paintTodos = () => {
+  $ul.innerHTML = '';
+  const todos = store.getState();
+  todos.forEach((todo) => {
+    const $li = document.createElement('li');
+    const $btn = document.createElement('button');
+    $btn.textContent = 'DEL';
+    $btn.addEventListener('click', handleDeleteTodo);
+    $li.id = todo.id;
+    $li.textContent = todo.text;
+    $li.append($btn);
+    $ul.append($li);
+  });
+};
+
+store.subscribe(paintTodos);
+$form.addEventListener('submit', handleSubmit);
