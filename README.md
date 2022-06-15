@@ -53,5 +53,6 @@ Nomad Coders의 강좌 [초보자를 위한 리덕스 101](https://nomadcoders.c
   - `mapDispatchToProps`는 store의 dispatch를 props로 전달한다.
   - `mapStateToProps`, `mapDispatchToProps`의 두 번째 인자는 컴포넌트가 전달받은 props(`ownProps`)이다.
 
-
+- **reducer**는 순수 함수여야 하기에 localStorage의 조작 등을 수행하기에 적절하지 않다. subscribe에서 수행하는 게 바람직하다.
+  - [[javascript - Where to write to localStorage in a Redux app? - Stack Overflow](https://stackoverflow.com/questions/35305661/where-to-write-to-localstorage-in-a-redux-app)](https://stackoverflow.com/questions/35305661/where-to-write-to-localstorage-in-a-redux-app)
 

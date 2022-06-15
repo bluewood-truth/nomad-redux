@@ -3,6 +3,8 @@ import {createStore} from 'redux';
 const ADD = 'ADD';
 const DELETE = 'DELETE';
 
+const STORAGE_KEY = 'TODOS';
+
 export const action = {
   addTodo: (text) => ({
     type: ADD,
@@ -11,7 +13,9 @@ export const action = {
   deleteTodo: (id) => ({type: DELETE, id}),
 };
 
-const reducer = (state = [], action) => {
+const initialState = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');;
+
+const reducer = (state = initialState, action) => {
   switch (action.type) {
     case ADD:
       return [{text: action.text, id: Date.now()}, ...state];
@@ -23,5 +27,12 @@ const reducer = (state = [], action) => {
 };
 
 const store = createStore(reducer);
+
+const updateStorage = () => {
+  const todos = store.getState();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+}
+
+store.subscribe(updateStorage);
 
 export default store;
