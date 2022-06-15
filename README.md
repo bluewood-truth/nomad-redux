@@ -23,3 +23,35 @@ Nomad Coders의 강좌 [초보자를 위한 리덕스 101](https://nomadcoders.c
 
 - `subscribe` 메서드에 콜백 함수를 전달해 데이터가 변경될 때마다 특정 작업을 수행하도록 만들 수 있다!
   - 기존의 MVC 모델에서 controller에 매번 view의 업데이트를 넣어줘야 하는 거에 비하면 매우 깔끔하다.
+
+### Building React Redux
+
+- store, reducer, action 등을 정의하는 것은 바닐라JS와 동일하다.
+
+- react-redux 라이브러리의 `Provider` 컴포넌트로 데이터를 제공할 컴포넌트를 감싸고 `store` 프로퍼티에 앞서 생성한 store를 전달함으로써 React에서 Redux를 사용할 수 있다.
+
+- 데이터를 사용할 컴포넌트에서는 `connect()` 함수를 사용한다. `connect()`는 `mapStateToProps`와 `mapDispatchToProps` 두 함수를 매개변수로 받아 함수를 리턴하는 고차함수다.
+
+  ```jsx
+  const Home = ({todo, addTodo, deleteTodo}) => {...};
+  
+  const mapStateToProps = (state) => {
+    return {todos: state};
+  };
+  
+  const mapDispatchToProps = (dispatch) => {
+    return {
+      addTodo: (text) => dispatch(action.addTodo(text)),
+      deleteTodo: (id) => dispatch(action.deleteTodo(id)),
+    };
+  };
+                      
+  export default connect(mapStateToProps, mapDispatchToProps)(Home);
+  ```
+
+  - `mapStateToProps`는 store의 state를 props로 전달한다.
+  - `mapDispatchToProps`는 store의 dispatch를 props로 전달한다.
+  - `mapStateToProps`, `mapDispatchToProps`의 두 번째 인자는 컴포넌트가 전달받은 props(`ownProps`)이다.
+
+
+
