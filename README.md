@@ -56,3 +56,70 @@ Nomad Coders의 강좌 [초보자를 위한 리덕스 101](https://nomadcoders.c
 - **reducer**는 순수 함수여야 하기에 localStorage의 조작 등을 수행하기에 적절하지 않다. subscribe에서 수행하는 게 바람직하다.
   - [[javascript - Where to write to localStorage in a Redux app? - Stack Overflow](https://stackoverflow.com/questions/35305661/where-to-write-to-localstorage-in-a-redux-app)](https://stackoverflow.com/questions/35305661/where-to-write-to-localstorage-in-a-redux-app)
 
+### Redux Toolkit
+
+- Redux의 문제점: 코드의 양이 많다!
+
+- **Redux Toolkit**: 간결하고 효율적인 코드로 Redux를 사용하기 위한 라이브러리.
+
+- `createAction()`: action 객체를 리턴하는 함수(action generator)를 생성한다.
+
+  ```javascript
+  // 기존 방식
+  const addTodo = (text) => ({
+      type: 'ADD',
+      id: Date().now(),
+      text,
+  });
+  
+  // createAction 사용
+  const addTodo = createAction('ADD');
+  // addTodo(arg)의 리턴값 => {type: 'ADD', payload: arg}
+  ```
+
+- `createReducer()`: reducer를 생성한다.
+
+  - 첫번째 인수는 초기값이고 두번째 인수는 reducer에 필요한 정보를 담은 map object 혹은 builder callback이다.
+  - map object는 더 짧지만 JavaScript에서만 작동한다.
+  - builder callback은 TypeScript 및 대부분의 IDE에서 가장 잘 작동하므로 일반적으로 권장된다.
+  - createReducer에서는 state를 직접 mutate할 수 있다! (내부적으로 Immer를 사용)
+    - 기존처럼 새 state를 리턴하는 방식도 잘 작동한다.
+  - [createReducer | Redux Toolkit (redux-toolkit.js.org)](https://redux-toolkit.js.org/api/createReducer#usage-with-the-builder-callback-notation)
+
+- `createSlice()`: action generator와 reducer를 한번에 생성한다!
+
+  ```javascript
+  // createAction, createReducer 사용
+  export const actions = {
+      addTodo: createAction('ADD'),
+      deleteTodo: createAction('DELETE');
+  }
+  
+  const reducer = createReducer(initialState, {
+      [actions.addTodo]: (state, action) => {
+      	state.unshift({text: action.payload, id: Date.now()});
+      [actions.deleteTodo]: (state, action) =>
+        state.filter((todo) => todo.id !== action.payload),
+  });
+  
+  const store = configureStore({reducer});
+  
+  // createSlice 사용
+  const todos = createSlice({
+    name: 'todoReducer',
+    initialState,
+    reducers: {
+      addTodo: (state, action) => {
+        state.unshift({text: action.payload, id: Date.now()});
+      },
+      deleteTodo: (state, action) =>
+        state.filter((todo) => todo.id !== action.payload),
+    },
+  });
+  
+  export const {actions} = todos;
+  
+  const store = configureStore({reducer: todos.reducer});
+  ```
+
+  

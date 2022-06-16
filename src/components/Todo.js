@@ -1,5 +1,5 @@
 import {connect} from 'react-redux';
-import {action} from '../store';
+import {actions} from '../store';
 
 const Todo = ({text, onDeleteClick}) => {
   return (
@@ -13,7 +13,7 @@ const Todo = ({text, onDeleteClick}) => {
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
     onDeleteClick: () => {
-      dispatch(action.deleteTodo(ownProps.id));
+      dispatch(actions.deleteTodo(ownProps.id));
     },
   };
 };
